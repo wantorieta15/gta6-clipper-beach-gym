@@ -1,6 +1,7 @@
 // gta6-clipper-01 entry: the clip already lives on YouTube as a public
 // Short, so this program does exactly one thing — it copies VIDEO.json
-// from the repository to /output. That is all it has to do (RULES.txt).
+// from the repository to /output, after checking the address in it is
+// a YouTube video address. That is all it has to do (RULES.txt).
 //
 // The clip itself was cut and rendered in the build session (GTA VI
 // Trailer 2, seconds 35-46, vertical 1080x1920, 28 seconds, with the
@@ -19,12 +20,20 @@ const outDir = process.env.MAKEFUN_OUTPUT_DIR ?? '/output';
 
 // The gate reads VIDEO.json from /output and reads the video itself
 // through the YouTube Data API, so nothing this program writes about
-// the video counts — the address above is the whole entry.
+// the video counts — the address above is the whole entry. The address
+// is checked to be a YouTube video address first, so a mistyped
+// VIDEO.json fails loudly here instead of publishing a dead link.
+const youTubeUrlPattern =
+  /^https:\/\/(?:www\.|m\.)?(?:youtube\.com\/(?:shorts\/|watch\?v=)|youtu\.be\/)[A-Za-z0-9_-]{11}/;
+
 function main(): void {
   const raw = readFileSync(join(botDir, 'VIDEO.json'), 'utf8');
   const data = JSON.parse(raw) as { url?: unknown };
   if (typeof data.url !== 'string' || data.url.length === 0) {
     throw new Error('VIDEO.json holds no url string');
+  }
+  if (!youTubeUrlPattern.test(data.url)) {
+    throw new Error(`VIDEO.json url is not a YouTube video address: ${data.url}`);
   }
   mkdirSync(outDir, { recursive: true });
   writeFileSync(join(outDir, 'VIDEO.json'), raw);
