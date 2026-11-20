@@ -52,7 +52,12 @@ const OUT_H = 1920;
 const FPS = 30;
 
 const FONT = '/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf';
-const PLAY_CODE = 'makefun-quail-clipper-pancake';
+// The play code is one of this bounty's four codes for account 1,
+// fetched from GET /api/competitions/gta6-clipper-01/play-code: code 0.
+// Any of the four passes the gate; code 0 is the one the kit reports.
+// (The code named in the original brief belongs to another bounty and
+// is NOT one of this bounty's four — it would not pass this gate.)
+const PLAY_CODE = 'makefun-dairy-peach-field';
 
 // On-screen text. Colons and commas are left out of every line on
 // purpose: ffmpeg's filter parser treats them as separators, and the
